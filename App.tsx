@@ -1,20 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import Asteroid from './src/Asteroid';
+import AsteroidInfo from './src/AsteroidInfo';
+import { Container, Grid } from '@mui/material';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <>
+      <BrowserRouter>
+        <Container maxWidth='lg'>
+          <Grid
+            container
+            direction='row'
+            justifyContent='center'
+            alignItems='center'
+            minHeight='100vh'
+          >
+            <Routes>
+              <Route path='/' element={<Asteroid />} />
+              <Route path='/info' element={<AsteroidInfo />} />
+            </Routes>
+          </Grid>
+        </Container>
+      </BrowserRouter>
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
