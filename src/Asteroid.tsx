@@ -1,12 +1,27 @@
 import React, { useState } from 'react';
-import { TextField, Button, Paper, Grid, Box, Stack } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Paper,
+  Grid,
+  Box,
+  Stack,
+  Typography,
+} from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const apiKey = 'jbrG2AiyrWHFmHAm33QHdUdwBwjWnW2ZcCdmq7YO';
 
+interface asteroid {
+  asteroidObj: {
+    name: string;
+    nasa_jpl_url: string;
+    is_potentially_hazardous_asteroid: boolean;
+  };
+}
 const Asteroid = () => {
-  const [asteroidID, setAsteroidID] = useState('2001865');
+  const [asteroidID, setAsteroidID] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -16,7 +31,8 @@ const Asteroid = () => {
         `https://api.nasa.gov/neo/rest/v1/neo/${asteroidID}?api_key=${apiKey}`
       )
       .then((res) => {
-        navigate('/info', { state: { response: res.data } });
+        const data: asteroid['asteroidObj'] = res.data;
+        navigate('/info', { state: { response: data } });
       })
       .catch((err) => console.log(err));
   };
@@ -27,9 +43,8 @@ const Asteroid = () => {
       .then((res) => {
         const asteroidData = res?.data?.near_earth_objects;
         const random = Math.floor(Math.random() * asteroidData?.length);
-        navigate('/info', { state: { response: asteroidData[random] } });
-      })
-      .catch((err) => console.log(err));
+        setAsteroidID(asteroidData[random].id);
+      });
   };
 
   return (
@@ -43,6 +58,13 @@ const Asteroid = () => {
               alignItems: 'center',
             }}
           >
+            <Typography
+              variant='h5'
+              sx={{ mb: 3, fontWeight: 700 }}
+              color='primary'
+            >
+              Search Asteroid Data
+            </Typography>
             <TextField
               label='Enter Asteroid Id'
               variant='outlined'
@@ -54,7 +76,7 @@ const Asteroid = () => {
               <Button
                 variant='contained'
                 onClick={onSubmitHandler}
-                disabled={asteroidID.length !== 7}
+                disabled={asteroidID.length === 0}
               >
                 Submit
               </Button>
